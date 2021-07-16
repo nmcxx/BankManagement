@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using BankManagement.WebAPI.Helpers;
+using BankManagement.WebAPI.Services;
+using System;
 
 namespace BankManagement.WebAPI
 {
@@ -29,6 +31,16 @@ namespace BankManagement.WebAPI
                 services.AddDbContext<DataContext>();
 
             services.AddControllers();
+
+            services.AddDbContext<DataContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("BankManagementWebApiDatabase")));
+
+            services.AddScoped<IAuthenService, AuthenService>();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddControllers().AddNewtonsoftJson(options =>
+               options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,7 +48,6 @@ namespace BankManagement.WebAPI
         {
             // migrate any database changes on startup (includes initial db creation)
             dataContext.Database.Migrate();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -46,11 +57,14 @@ namespace BankManagement.WebAPI
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{action}/{id?}");
             });
         }
     }

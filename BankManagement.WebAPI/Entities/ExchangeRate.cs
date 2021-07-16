@@ -9,6 +9,8 @@ namespace BankManagement.WebAPI.Entities
     {
         public int ExchangeRateId { get; set; }
         public string ExchangeRateName { get; set; }
-        public virtual ICollection<Currency> Currencies { get; set; }
+        public int Currency_id { get; set; }
+        public Currency Currency { get; set; }
+
     }
 }

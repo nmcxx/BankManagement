@@ -19,6 +19,22 @@ namespace BankManagement.WebAPI.Helpers
             // connect to sql server database
             options.UseSqlServer(Configuration.GetConnectionString("BankManagementWebApiDatabase"));
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Currency>().HasKey(s => s.CurrencyId);
+            modelBuilder.Entity<Customer>().HasKey(s => s.CustomerId);
+            modelBuilder.Entity<Deal>().HasKey(s => s.DealId);
+            modelBuilder.Entity<ExchangeRate>().HasKey(s => s.ExchangeRateId);
+            modelBuilder.Entity<Role>().HasKey(s => s.RoleId);
+            modelBuilder.Entity<Service>().HasKey(s => s.ServiceId);
+
+            modelBuilder.Entity<Currency>()
+               .HasMany<ExchangeRate>(s => s.ExchangeRates)
+               .WithOne(a => a.Currency)
+               .HasForeignKey(a => a.Currency_id)
+               .OnDelete(DeleteBehavior.Restrict);
+
+        }
 
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<Customer> Customers { get; set; }
