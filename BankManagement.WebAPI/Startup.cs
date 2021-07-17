@@ -1,24 +1,21 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using BankManagement.WebAPI.Helpers;
 using BankManagement.WebAPI.Services;
 using System;
+using Microsoft.Extensions.Configuration;
 
 namespace BankManagement.WebAPI
 {
     public class Startup
     {
-        private readonly IWebHostEnvironment _env;
-        private readonly IConfiguration _configuration;
 
-        public Startup(IWebHostEnvironment env, IConfiguration configuration)
+        public Startup(IConfiguration configuration)
         {
-            _env = env;
-            _configuration = configuration;
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -27,13 +24,10 @@ namespace BankManagement.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             // use sql server db in production and sqlite db in development
-            if (_env.IsProduction())
-                services.AddDbContext<DataContext>();
-
             services.AddControllers();
-
+            string connectionString = Configuration.GetConnectionString("BankManagementWebApiDatabase");
             services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("BankManagementWebApiDatabase")));
+                options.UseSqlServer(Configuration.GetConnectionString(connectionString)));
 
             services.AddScoped<IAuthenService, AuthenService>();
 
