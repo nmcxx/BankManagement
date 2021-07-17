@@ -15,7 +15,6 @@ namespace BankManagement.WebAPI.Services
     public interface IAuthenService
     {
         Customer Login(Customer model);
-        Customer Register(Customer _user);
     }
     public class AuthenService : IAuthenService
     {
@@ -58,34 +57,6 @@ namespace BankManagement.WebAPI.Services
             return byte2String;
         }
 
-        public Customer Register(Customer _user)
-        {
-            if (string.IsNullOrWhiteSpace(_user.Password))
-                throw new AppException("Password is required");
-            string email = _user.Email;
-            try
-            {
-                email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
-                                      RegexOptions.None, TimeSpan.FromMilliseconds(200));
-                string DomainMapper(Match match)
-                {
-                    var idn = new IdnMapping();
-                    string domainName = idn.GetAscii(match.Groups[2].Value);
-                    return match.Groups[1].Value + domainName;
-                }
-            }
-            catch (RegexMatchTimeoutException e)
-            {
-                throw new AppException("Email format is invalid");
-            }
-            
-            if (_db.Customers.Any(x => x.Email == _user.Email))
-                throw new AppException("Email is taken");
-            string pass = GetMD5(_user.Password);
-            _user.Password = pass;
-            _db.Customers.Add(_user);
-            _db.SaveChanges();
-            return _user;
-        }
+      
     }
 }

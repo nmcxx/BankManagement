@@ -26,8 +26,8 @@ namespace BankManagement.WebAPI
             // use sql server db in production and sqlite db in development
             services.AddControllers();
             string connectionString = Configuration.GetConnectionString("BankManagementWebApiDatabase");
-            services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(connectionString)));
+            var c =services.AddDbContext<DataContext>(options =>
+                options.UseSqlServer(connectionString));
 
             services.AddScoped<IAuthenService, AuthenService>();
 
@@ -35,6 +35,8 @@ namespace BankManagement.WebAPI
 
             services.AddControllers().AddNewtonsoftJson(options =>
                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddScoped<ICustomerService, CustomerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
