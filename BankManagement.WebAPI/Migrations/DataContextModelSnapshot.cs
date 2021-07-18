@@ -44,7 +44,7 @@ namespace BankManagement.WebAPI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<float>("AccountBalancce")
+                    b.Property<float>("AccountBalance")
                         .HasColumnType("real");
 
                     b.Property<string>("AccountNumber")
@@ -65,8 +65,8 @@ namespace BankManagement.WebAPI.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PhoneNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("RolesRoleId")
                         .HasColumnType("int");

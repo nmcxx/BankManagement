@@ -144,17 +144,49 @@ namespace BankManagement.WebAPI.Services
         }
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            var x = _db.Customers.Find(id);
+            if (x == null)
+            {
+                throw new AppException("Customer id: " + id + "" + "is not found");
+            }
+            _db.Customers.Remove(x);
         }
 
         public Customer Edit(Customer model)
         {
-            throw new NotImplementedException();
+            var obj = _db.Customers.Find(model.CustomerId);
+            if (obj == null)
+                throw new AppException("Customer is not found");
+            if (!string.IsNullOrWhiteSpace(model.CustomerName))
+                obj.CustomerName = model.CustomerName;
+            if (!string.IsNullOrWhiteSpace(model.Address))
+                obj.Address = model.Address;
+            if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
+                obj.PhoneNumber = model.PhoneNumber;
+            string DOB = Convert.ToString(model.DateOfBirth);
+            if (!string.IsNullOrWhiteSpace(DOB))
+                obj.DateOfBirth = model.DateOfBirth;
+            obj.Roles = _db.Roles.Find(2);
+            _db.Customers.Update(obj);
+            _db.SaveChanges();
+            return obj;
         }
 
         public IEnumerable<Customer> GetAll()
         {
-            var x = _db.Customers;
+            var x = _db.Customers.Select(s => new Customer
+            {
+                CustomerId = s.CustomerId,
+                CustomerName = s.CustomerName,
+                Email = s.Email,
+                Password =s.Password,
+                Address = s.Address,
+                PhoneNumber = s.PhoneNumber,
+                AccountNumber = s.AccountNumber,
+                AccountBalance =s.AccountBalance,
+                DateOfBirth = s.DateOfBirth,
+                Roles = _db.Roles.Where(x => x.RoleId == s.Roles.RoleId).FirstOrDefault()
+            }).ToList();
             if(x == null)
             {
                 throw new AppException("Data customer is null");
