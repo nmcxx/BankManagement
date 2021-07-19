@@ -35,6 +35,7 @@ namespace BankManagement.WebAPI
                 options.UseSqlServer(Configuration.GetConnectionString("BankManagementWebApiDatabase")));
 
             services.AddScoped<IAuthenService, AuthenService>();
+            services.AddScoped<IDealService, DealService>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

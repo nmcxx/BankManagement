@@ -44,16 +44,15 @@ namespace BankManagement.WebAPI.Services
         public Deal Withdraw(int customerId, int currentcy, float withdrawnumber)
         {
             var model = _db.Customers.Find(customerId);
-            System.ComponentModel.DateTimeConverter c = new System.ComponentModel.DateTimeConverter();
 
-            if (_db.Customers.Any(x => x.CustomerId != currentcy))
+            if (_db.Customers.Any(x => x.CurrencyId != currentcy))
                 throw new AppException("Currentcy " + currentcy + " is not valid");
             if (_db.Customers.Any(x => x.AccountBalancce < withdrawnumber))
                 throw new AppException("Account balance " + withdrawnumber + " is not enought");
             var deal = new Deal
             {
                 Money = withdrawnumber,
-                Date = (DateTime)c.ConvertFromString("yyyy-mm-dd"),
+                Date = DateTime.Now,
                 CustomerIdRevice = model.CustomerId,
                 CustomerIdSend = 0,
                 Customers = _db.Customers.Where(x => x.CustomerId == model.CustomerId).FirstOrDefault(),

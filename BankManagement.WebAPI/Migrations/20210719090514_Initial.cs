@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BankManagement.WebAPI.Migrations
 {
-    public partial class initialDatabase : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -79,19 +79,13 @@ namespace BankManagement.WebAPI.Migrations
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AccountBalance = table.Column<float>(type: "real", nullable: false),
-                    CurrenciesCurrencyId = table.Column<int>(type: "int", nullable: true),
+                    AccountBalancce = table.Column<float>(type: "real", nullable: false),
+                    CurrencyId = table.Column<int>(type: "int", nullable: false),
                     RolesRoleId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customers", x => x.CustomerId);
-                    table.ForeignKey(
-                        name: "FK_Customers_Currencies_CurrenciesCurrencyId",
-                        column: x => x.CurrenciesCurrencyId,
-                        principalTable: "Currencies",
-                        principalColumn: "CurrencyId",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Customers_Roles_RolesRoleId",
                         column: x => x.RolesRoleId,
@@ -107,7 +101,6 @@ namespace BankManagement.WebAPI.Migrations
                     DealId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Money = table.Column<float>(type: "real", nullable: false),
-                    AccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CustomerIdSend = table.Column<int>(type: "int", nullable: false),
                     CustomerIdRevice = table.Column<int>(type: "int", nullable: false),
@@ -137,11 +130,6 @@ namespace BankManagement.WebAPI.Migrations
                         principalColumn: "ServiceId",
                         onDelete: ReferentialAction.Restrict);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Customers_CurrenciesCurrencyId",
-                table: "Customers",
-                column: "CurrenciesCurrencyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_RolesRoleId",
