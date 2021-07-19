@@ -15,6 +15,7 @@ namespace BankManagement.WebAPI.Services
     public interface IAuthenService
     {
         Customer Login(Customer model);
+
     }
     public class AuthenService : IAuthenService
     {
