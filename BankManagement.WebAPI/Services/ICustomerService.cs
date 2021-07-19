@@ -66,7 +66,7 @@ namespace BankManagement.WebAPI.Services
                 Address = model.Address,
                 PhoneNumber = model.PhoneNumber,
                 AccountNumber = model.AccountNumber,
-                AccountBalance = model.AccountBalance,
+                AccountBalancce = model.AccountBalancce,
                 DateOfBirth = model.DateOfBirth,
                 Roles = _db.Roles.Find(2)                
             };
@@ -185,7 +185,7 @@ namespace BankManagement.WebAPI.Services
                 Address = s.Address,
                 PhoneNumber = s.PhoneNumber,
                 AccountNumber = s.AccountNumber,
-                AccountBalance =s.AccountBalance,
+                AccountBalancce =s.AccountBalancce,
                 DateOfBirth = s.DateOfBirth,
                 Roles = _db.Roles.Where(x => x.RoleId == s.Roles.RoleId).FirstOrDefault()
             }).ToList();

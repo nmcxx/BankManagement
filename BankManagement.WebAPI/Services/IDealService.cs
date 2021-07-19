@@ -12,7 +12,7 @@ namespace BankManagement.WebAPI.Services
         IEnumerable<Deal> GetAll();
         Deal GetByID(int id);
         Deal Add(Deal model);
-        Deal Withdraw(string accountnumber, string password, int currentcy, float withdrawnumber);
+        Deal Withdraw(int customerId, int currentcy, float withdrawnumber);
         void Delete(int id);
     }
     public class DealService : IDealService
@@ -41,26 +41,29 @@ namespace BankManagement.WebAPI.Services
         {
             throw new NotImplementedException();
         }
-        public Deal Withdrawint( int currentcy, float withdrawnumber)
+        public Deal Withdraw(int customerId, int currentcy, float withdrawnumber)
         {
-            CustomerService
-            var deal = _db.Deals.SingleOrDefault(s => );
+            var model = _db.Customers.Find(customerId);
             System.ComponentModel.DateTimeConverter c = new System.ComponentModel.DateTimeConverter();
 
             if (_db.Customers.Any(x => x.CustomerId != currentcy))
                 throw new AppException("Currentcy " + currentcy + " is not valid");
-            if (_db.Customers.Any(x => x.AccountBalance < withdrawnumber))
+            if (_db.Customers.Any(x => x.AccountBalancce < withdrawnumber))
                 throw new AppException("Account balance " + withdrawnumber + " is not enought");
-            deal.AccountNumber = user.AccountNumber;
-            deal.Money = withdrawnumber;
-            deal.Date = (DateTime)c.ConvertFromString("yyyy-mm-dd");
-            deal.Services.ServiceId = 2;
-            deal.Currencies.CurrencyId = currentcy;
-            user.AccountBalance -= deal.Money;
-            _db.Customers.Update(user);
+            var deal = new Deal
+            {
+                Money = withdrawnumber,
+                Date = (DateTime)c.ConvertFromString("yyyy-mm-dd"),
+                CustomerIdRevice = model.CustomerId,
+                CustomerIdSend = 0,
+                Customers = _db.Customers.Where(x => x.CustomerId == model.CustomerId).FirstOrDefault(),
+                Services = _db.Services.Where(v => v.ServiceId == 2).FirstOrDefault(),
+                Currencies = _db.Currencies.Where(w => w.CurrencyId == currentcy).FirstOrDefault()
+            };
+            model.AccountBalancce -= deal.Money;
+            _db.Customers.Update(model);
             _db.Deals.Add(deal);
             _db.SaveChanges();
-
             return deal;
         }
     }

@@ -7,9 +7,7 @@ namespace BankManagement.WebAPI.Models
 {
     public class DealModel
     {
-
-        public string AccountNumber { get; set; }
-        public int Money { get; set; }
+        public float Money { get; set; }
         public DateTime Date { get; set; }
         public int CustomerIdSend { get; set; }
         public int CustomerIdRevice { get; set; }
