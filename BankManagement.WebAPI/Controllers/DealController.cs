@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BankManagement.WebAPI.Entities;
 using BankManagement.WebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -35,6 +36,21 @@ namespace BankManagement.WebAPI.Controllers
                 return Ok(c);
             }
             catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("Transfer")]
+        [HttpPost]
+        public IActionResult Transfer(Deal deal)
+        {
+            try
+            {
+                var c = _dealService.Add(deal);
+                return Ok(c);
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
