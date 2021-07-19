@@ -28,12 +28,7 @@ namespace BankManagement.WebAPI.Helpers
             modelBuilder.Entity<Role>().HasKey(s => s.RoleId);
             modelBuilder.Entity<Service>().HasKey(s => s.ServiceId);
 
-            modelBuilder.Entity<Currency>()
-               .HasMany<ExchangeRate>(s => s.ExchangeRates)
-               .WithOne(a => a.Currency)
-               .HasForeignKey(a => a.Currency_id)
-               .OnDelete(DeleteBehavior.Restrict);
-
+        
         }
 
         public DbSet<Currency> Currencies { get; set; }
