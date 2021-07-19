@@ -24,7 +24,29 @@ namespace BankManagement.WebAPI.Services
         }
         public Deal Add(Deal model)
         {
-            throw new NotImplementedException();
+            if (_db.Customers.Find(model.CustomerIdSend) == null || _db.Customers.Find(model.CustomerIdRevice) == null)
+                throw new AppException("Customer is not exists");
+
+            if (_db.Customers.Find(model.CustomerIdSend).AccountBalancce - model.Money <= 50000)
+                throw new AppException("Your amount is not enough");
+
+
+            try
+            {
+                _db.Customers.Find(model.CustomerIdSend).AccountBalancce -= model.Money;
+                _db.Customers.Find(model.CustomerIdRevice).AccountBalancce += model.Money;
+                model.Date = DateTime.Now;
+                var deal = _db.AddAsync(model);
+                _db.SaveChangesAsync();
+                return deal.Result.Entity;
+                
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+
+
         }
 
         public void Delete(int id)
