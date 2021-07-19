@@ -1,24 +1,21 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using BankManagement.WebAPI.Helpers;
 using BankManagement.WebAPI.Services;
 using System;
+using Microsoft.Extensions.Configuration;
 
 namespace BankManagement.WebAPI
 {
     public class Startup
     {
-        private readonly IWebHostEnvironment _env;
-        private readonly IConfiguration _configuration;
 
-        public Startup(IWebHostEnvironment env, IConfiguration configuration)
+        public Startup(IConfiguration configuration)
         {
-            _env = env;
-            _configuration = configuration;
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -27,13 +24,10 @@ namespace BankManagement.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             // use sql server db in production and sqlite db in development
-            if (_env.IsProduction())
-                services.AddDbContext<DataContext>();
-
             services.AddControllers();
-
-            services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("BankManagementWebApiDatabase")));
+            string connectionString = Configuration.GetConnectionString("BankManagementWebApiDatabase");
+            var c =services.AddDbContext<DataContext>(options =>
+                options.UseSqlServer(connectionString));
 
             services.AddScoped<IAuthenService, AuthenService>();
 
@@ -41,6 +35,8 @@ namespace BankManagement.WebAPI
 
             services.AddControllers().AddNewtonsoftJson(options =>
                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddScoped<ICustomerService, CustomerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

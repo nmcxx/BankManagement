@@ -16,8 +16,8 @@ namespace BankManagement.WebAPI.Helpers
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            // connect to sql server database
-            options.UseSqlServer(Configuration.GetConnectionString("BankManagementWebApiDatabase"));
+            string connectionString = Configuration.GetConnectionString("BankManagementWebApiDatabase");
+            var c = options.UseSqlServer(connectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
