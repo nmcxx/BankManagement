@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,7 +15,8 @@ namespace BankManagement.WebAPI.Entities
         public string PhoneNumber { get; set; }
         public string AccountNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public float AccountBalance { get; set; }
+        public float AccountBalancce { get; set; }
+        public int CurrencyId { get; set; }
         public virtual Role Roles { get; set; }
     }
 }

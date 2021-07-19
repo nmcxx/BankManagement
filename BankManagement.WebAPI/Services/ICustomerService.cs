@@ -37,8 +37,10 @@ namespace BankManagement.WebAPI.Services
                 throw new AppException("Address is required");
             if (string.IsNullOrWhiteSpace(model.PhoneNumber))
                 throw new AppException("PhoneNumber is required");
-            string DOB = Convert.ToString(model.DateOfBirth);
-            if (string.IsNullOrWhiteSpace(DOB))
+            System.ComponentModel.DateTimeConverter c = new System.ComponentModel.DateTimeConverter();
+
+            DateTime DOB =(DateTime)c.ConvertFromString("yyyy-mm-dd"); ;
+            if (string.IsNullOrWhiteSpace(DOB.ToString()))
                 throw new AppException("Date of birth is required");
             bool valid = IsValidEmail(model.Email);
             if (valid == false)
@@ -64,7 +66,7 @@ namespace BankManagement.WebAPI.Services
                 Address = model.Address,
                 PhoneNumber = model.PhoneNumber,
                 AccountNumber = model.AccountNumber,
-                AccountBalance = model.AccountBalance,
+                AccountBalancce = model.AccountBalancce,
                 DateOfBirth = model.DateOfBirth,
                 Roles = _db.Roles.Find(2)                
             };
@@ -183,7 +185,7 @@ namespace BankManagement.WebAPI.Services
                 Address = s.Address,
                 PhoneNumber = s.PhoneNumber,
                 AccountNumber = s.AccountNumber,
-                AccountBalance =s.AccountBalance,
+                AccountBalancce =s.AccountBalancce,
                 DateOfBirth = s.DateOfBirth,
                 Roles = _db.Roles.Where(x => x.RoleId == s.Roles.RoleId).FirstOrDefault()
             }).ToList();
@@ -203,5 +205,7 @@ namespace BankManagement.WebAPI.Services
             }
             return x;
         }
+
+        
     }
 }
