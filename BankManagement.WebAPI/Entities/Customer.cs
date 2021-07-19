@@ -18,6 +18,7 @@ namespace BankManagement.WebAPI.Entities
         public string AccountNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
         public float AccountBalance { get; set; }
+        public virtual Currency Currencies { get; set; }
         public virtual Role Roles { get; set; }
     }
 }

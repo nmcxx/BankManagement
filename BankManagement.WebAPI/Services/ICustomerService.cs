@@ -37,8 +37,10 @@ namespace BankManagement.WebAPI.Services
                 throw new AppException("Address is required");
             if (string.IsNullOrWhiteSpace(model.PhoneNumber))
                 throw new AppException("PhoneNumber is required");
-            string DOB = Convert.ToString(model.DateOfBirth);
-            if (string.IsNullOrWhiteSpace(DOB))
+            System.ComponentModel.DateTimeConverter c = new System.ComponentModel.DateTimeConverter();
+
+            DateTime DOB =(DateTime)c.ConvertFromString("yyyy-mm-dd"); ;
+            if (string.IsNullOrWhiteSpace(DOB.ToString()))
                 throw new AppException("Date of birth is required");
             bool valid = IsValidEmail(model.Email);
             if (valid == false)
@@ -203,5 +205,7 @@ namespace BankManagement.WebAPI.Services
             }
             return x;
         }
+
+        
     }
 }

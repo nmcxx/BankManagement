@@ -29,9 +29,6 @@ namespace BankManagement.WebAPI.Migrations
                     b.Property<string>("CurrencyName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ExchangeRate_id")
-                        .HasColumnType("int");
-
                     b.HasKey("CurrencyId");
 
                     b.ToTable("Currencies");
@@ -53,6 +50,9 @@ namespace BankManagement.WebAPI.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CurrenciesCurrencyId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CustomerName")
                         .HasColumnType("nvarchar(max)");
 
@@ -73,6 +73,8 @@ namespace BankManagement.WebAPI.Migrations
 
                     b.HasKey("CustomerId");
 
+                    b.HasIndex("CurrenciesCurrencyId");
+
                     b.HasIndex("RolesRoleId");
 
                     b.ToTable("Customers");
@@ -84,6 +86,9 @@ namespace BankManagement.WebAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CurrenciesCurrencyId")
                         .HasColumnType("int");
@@ -100,8 +105,8 @@ namespace BankManagement.WebAPI.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Money")
-                        .HasColumnType("int");
+                    b.Property<float>("Money")
+                        .HasColumnType("real");
 
                     b.Property<int?>("ServicesServiceId")
                         .HasColumnType("int");
@@ -169,9 +174,15 @@ namespace BankManagement.WebAPI.Migrations
 
             modelBuilder.Entity("BankManagement.WebAPI.Entities.Customer", b =>
                 {
+                    b.HasOne("BankManagement.WebAPI.Entities.Currency", "Currencies")
+                        .WithMany()
+                        .HasForeignKey("CurrenciesCurrencyId");
+
                     b.HasOne("BankManagement.WebAPI.Entities.Role", "Roles")
                         .WithMany()
                         .HasForeignKey("RolesRoleId");
+
+                    b.Navigation("Currencies");
 
                     b.Navigation("Roles");
                 });
@@ -199,14 +210,16 @@ namespace BankManagement.WebAPI.Migrations
 
             modelBuilder.Entity("BankManagement.WebAPI.Entities.ExchangeRate", b =>
                 {
-                    b.HasOne("BankManagement.WebAPI.Entities.Currency", null)
-                        .WithMany("ExchangeRates")
+                    b.HasOne("BankManagement.WebAPI.Entities.Currency", "Currency")
+                        .WithMany("exchangeRates")
                         .HasForeignKey("CurrencyId");
+
+                    b.Navigation("Currency");
                 });
 
             modelBuilder.Entity("BankManagement.WebAPI.Entities.Currency", b =>
                 {
-                    b.Navigation("ExchangeRates");
+                    b.Navigation("exchangeRates");
                 });
 #pragma warning restore 612, 618
         }
