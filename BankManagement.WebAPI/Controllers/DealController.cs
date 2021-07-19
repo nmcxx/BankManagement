@@ -27,7 +27,7 @@ namespace BankManagement.WebAPI.Controllers
         }
         [Route("AddWithdraw")]
         [HttpPost]
-        public IActionResult AddWithdraw([FromBody] int id, int currencyId, float withdraw )
+        public IActionResult AddWithdraw([FromForm] int id, int currencyId, float withdraw )
         {
             try
             {
