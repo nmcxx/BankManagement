@@ -4,14 +4,16 @@ using BankManagement.WebAPI.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BankManagement.WebAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210717092055_banking")]
+    partial class banking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +46,7 @@ namespace BankManagement.WebAPI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<float>("AccountBalance")
+                    b.Property<float>("AccountBalancce")
                         .HasColumnType("real");
 
                     b.Property<string>("AccountNumber")
@@ -65,8 +67,8 @@ namespace BankManagement.WebAPI.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PhoneNumber")
+                        .HasColumnType("int");
 
                     b.Property<int?>("RolesRoleId")
                         .HasColumnType("int");
@@ -124,7 +126,7 @@ namespace BankManagement.WebAPI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CurrencyId")
+                    b.Property<int>("Currency_id")
                         .HasColumnType("int");
 
                     b.Property<string>("ExchangeRateName")
@@ -132,7 +134,7 @@ namespace BankManagement.WebAPI.Migrations
 
                     b.HasKey("ExchangeRateId");
 
-                    b.HasIndex("CurrencyId");
+                    b.HasIndex("Currency_id");
 
                     b.ToTable("ExchangeRates");
                 });
@@ -199,9 +201,13 @@ namespace BankManagement.WebAPI.Migrations
 
             modelBuilder.Entity("BankManagement.WebAPI.Entities.ExchangeRate", b =>
                 {
-                    b.HasOne("BankManagement.WebAPI.Entities.Currency", null)
+                    b.HasOne("BankManagement.WebAPI.Entities.Currency", "Currency")
                         .WithMany("ExchangeRates")
-                        .HasForeignKey("CurrencyId");
+                        .HasForeignKey("Currency_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Currency");
                 });
 
             modelBuilder.Entity("BankManagement.WebAPI.Entities.Currency", b =>

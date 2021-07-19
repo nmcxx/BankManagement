@@ -9,6 +9,6 @@ namespace BankManagement.WebAPI.Entities
     {
         public int ExchangeRateId { get; set; }
         public string ExchangeRateName { get; set; }
-
+        public Currency Currency { get; set; }
     }
 }

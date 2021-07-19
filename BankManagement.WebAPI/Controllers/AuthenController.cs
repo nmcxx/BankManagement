@@ -72,22 +72,6 @@ namespace BankManagement.WebAPI.Controllers
                 return BadRequest("Error with exception: " + e);
             }
         }
-        [Route("Register")]
-        [HttpPost]
-        public IActionResult Register(RegisterModel model)
-        {
-            var user = _mapper.Map<Customer>(model);
-
-            try
-            {
-                // create user
-                _authenService.Register(user);
-                return Ok(user);
-            }
-            catch (Exception e)
-            {
-                return BadRequest("Exception : "+ e.Message);
-            }
-        }
+        
     }
 }

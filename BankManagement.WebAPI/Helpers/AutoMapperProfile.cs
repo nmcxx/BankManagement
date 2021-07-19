@@ -14,7 +14,6 @@ namespace ProductManagement.Helpers
         public AutoMapperProfile()
         {
             CreateMap<LoginModel, Customer>();
-            CreateMap<RegisterModel, Customer>();
             CreateMap<DealModel, Deal>();
             CreateMap<CustomerModel, Customer>();
         }

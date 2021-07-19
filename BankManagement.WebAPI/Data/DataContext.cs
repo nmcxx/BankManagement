@@ -16,8 +16,8 @@ namespace BankManagement.WebAPI.Helpers
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            // connect to sql server database
-            options.UseSqlServer(Configuration.GetConnectionString("BankManagementWebApiDatabase"));
+            string connectionString = Configuration.GetConnectionString("BankManagementWebApiDatabase");
+            var c = options.UseSqlServer(connectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,6 +27,8 @@ namespace BankManagement.WebAPI.Helpers
             modelBuilder.Entity<ExchangeRate>().HasKey(s => s.ExchangeRateId);
             modelBuilder.Entity<Role>().HasKey(s => s.RoleId);
             modelBuilder.Entity<Service>().HasKey(s => s.ServiceId);
+
+        
         }
 
         public DbSet<Currency> Currencies { get; set; }
