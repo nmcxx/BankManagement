@@ -205,7 +205,5 @@ namespace BankManagement.WebAPI.Services
             }
             return x;
         }
-
-        
     }
 }

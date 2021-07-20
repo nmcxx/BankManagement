@@ -15,6 +15,7 @@ namespace ProductManagement.Helpers
         {
             CreateMap<LoginModel, Customer>();
             CreateMap<DealModel, Deal>();
+            CreateMap<Deal, DealModel>();
             CreateMap<CustomerModel, Customer>();
         }
     }
