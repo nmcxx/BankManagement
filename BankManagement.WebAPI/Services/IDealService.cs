@@ -71,6 +71,8 @@ namespace BankManagement.WebAPI.Services
                 throw new AppException("Currentcy " + currentcy + " is not valid");
             if (_db.Customers.Any(x => x.AccountBalancce < withdrawnumber))
                 throw new AppException("Account balance " + withdrawnumber + " is not enought");
+            if (withdrawnumber % 50000 != 0)
+                throw new AppException(withdrawnumber + " Withdraw number must multiplicity of 50000");
             var deal = new Deal
             {
                 Money = withdrawnumber,
