@@ -36,6 +36,7 @@ namespace BankManagement.WebAPI
 
             services.AddScoped<IAuthenService, AuthenService>();
             services.AddScoped<IDealService, DealService>();
+            services.AddScoped<ICustomerService, CustomerService>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

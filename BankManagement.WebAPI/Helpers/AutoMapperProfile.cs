@@ -3,6 +3,7 @@ using BankManagement.WebAPI.Entities;
 using BankManagement.WebAPI.Models;
 using ProductManagement;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,9 +15,9 @@ namespace ProductManagement.Helpers
         public AutoMapperProfile()
         {
             CreateMap<LoginModel, Customer>();
-            CreateMap<DealModel, Deal>();
-            CreateMap<Deal, DealModel>();
             CreateMap<CustomerModel, Customer>();
+            CreateMap<Customer, CustomerModel>();
+            CreateMap<Deal, DealModel>();
         }
     }
 }

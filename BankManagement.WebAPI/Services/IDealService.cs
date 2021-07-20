@@ -70,8 +70,21 @@ namespace BankManagement.WebAPI.Services
 
         public IEnumerable<Deal> GetByIDCus(int id)
         {
-            var dead = _db.Deals.Where(x=>x.Customers.CustomerId==id).ToList();
-            return dead;
+            var cus = _db.Customers.Find(id);
+            //var deal = _db.Deals.Where(x => x.Customers.CustomerId == id).ToList();
+            var deal = _db.Deals.Select(s => new Deal
+            {
+                DealId = s.DealId,
+                Money = s.Money,
+                Date = s.Date,
+                CustomerIdRevice = s.CustomerIdRevice,
+                CustomerIdSend = s.CustomerIdSend,
+                Customers = cus,
+                Services =_db.Services.Where(a=>a.ServiceId == s.Services.ServiceId).FirstOrDefault(),
+                Currencies = _db.Currencies.Where(a => a.CurrencyId == s.Currencies.CurrencyId).FirstOrDefault(),
+            }).ToList();
+
+            return deal;
         }
 
         public Deal Withdraw(int customerId, int currentcy, float withdrawnumber)
@@ -97,6 +110,7 @@ namespace BankManagement.WebAPI.Services
                 Services = _db.Services.Where(v => v.ServiceId == 2).FirstOrDefault(),
                 Currencies = _db.Currencies.Where(w => w.CurrencyId == currentcy).FirstOrDefault()
             };
+
             model.AccountBalancce -= deal.Money;
             _db.Customers.Update(model);
 

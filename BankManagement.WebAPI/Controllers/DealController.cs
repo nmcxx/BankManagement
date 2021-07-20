@@ -62,8 +62,8 @@ namespace BankManagement.WebAPI.Controllers
         public IActionResult GetById(int id)
         {
             var deal = _dealService.GetByID(id);
-            var model = _mapper.Map<DealModel>(deal);
-            return Ok(model);
+            //var model = _mapper.Map<DealModel>(deal);
+            return Ok(deal);
         }
 
         [Route("GetByIdCus/{id}")]
@@ -71,8 +71,8 @@ namespace BankManagement.WebAPI.Controllers
         public IActionResult GetByIdCus(int id)
         {
             var deal = _dealService.GetByIDCus(id);
-            var model = _mapper.Map<DealModel>(deal);
-            return Ok(model);
+            //var model = _mapper.Map<DealModel>(deal);
+            return Ok(deal);
         }
     }
 }

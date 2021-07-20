@@ -79,5 +79,14 @@ namespace BankManagement.WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [Route("GetByIdCustomer/{id}")]
+        [HttpGet]
+        public IActionResult GetByIdCustomer(int id)
+        {
+            var user = _customerService.GetById(id);
+            var model = _mapper.Map<CustomerModel>(user);
+            return Ok(model);
+        }
     }
 }
