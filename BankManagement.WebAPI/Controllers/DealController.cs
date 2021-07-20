@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BankManagement.WebAPI.Entities;
 using BankManagement.WebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -10,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace BankManagement.WebAPI.Controllers
 {
+    [Route("[controller]")]
+    [ApiController]
     public class DealController : Controller
     {
         private IMapper _mapper;
@@ -22,10 +25,8 @@ namespace BankManagement.WebAPI.Controllers
             _dealService = dealService;
             _configuration = configuration;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+
+        [Authorize]
         [Route("AddWithdraw")]
         [HttpPost]
         public IActionResult AddWithdraw([FromForm] int id, int currencyId, float withdraw )
@@ -41,6 +42,7 @@ namespace BankManagement.WebAPI.Controllers
             }
         }
 
+        [Authorize]
         [Route("Transfer")]
         [HttpPost]
         public IActionResult Transfer(Deal deal)
