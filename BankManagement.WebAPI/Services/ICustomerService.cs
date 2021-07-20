@@ -37,9 +37,8 @@ namespace BankManagement.WebAPI.Services
                 throw new AppException("Address is required");
             if (string.IsNullOrWhiteSpace(model.PhoneNumber))
                 throw new AppException("PhoneNumber is required");
-            System.ComponentModel.DateTimeConverter c = new System.ComponentModel.DateTimeConverter();
 
-            DateTime DOB =(DateTime)c.ConvertFromString("yyyy-mm-dd"); ;
+            DateTime DOB = DateTime.Now;
             if (string.IsNullOrWhiteSpace(DOB.ToString()))
                 throw new AppException("Date of birth is required");
             bool valid = IsValidEmail(model.Email);

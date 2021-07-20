@@ -30,13 +30,24 @@ namespace BankManagement.WebAPI.Controllers
             _configuration = configuration;
         }
 
-        [Route("Login")]
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
+        #region Login  
+        /// <summary>
+        /// Login.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Login
+        ///     {
+        ///        "email": "string",
+        ///        "password": "string"
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="model"></param>
+        /// <returns>Status success and information customer</returns>
+        /// <response code="201">Returns information customer</response>
+        /// <response code="400">If the Customer is null or email or password not valid</response>
         [Route("Login")]
         [HttpPost]
         public IActionResult Login([FromBody] LoginModel model)
@@ -72,6 +83,6 @@ namespace BankManagement.WebAPI.Controllers
                 return BadRequest("Error with exception: " + e);
             }
         }
-        
+        #endregion
     }
 }

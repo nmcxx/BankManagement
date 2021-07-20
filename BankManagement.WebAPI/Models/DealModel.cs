@@ -12,8 +12,8 @@ namespace BankManagement.WebAPI.Models
         public DateTime Date { get; set; }
         public int CustomerIdSend { get; set; }
         public int CustomerIdRevice { get; set; }
-        public Service Services { get; set; }
-        public Currency Currencies { get; set; }
+        public virtual Service Services { get; set; }
+        public virtual Currency Currencies { get; set; }
 
     }
 }

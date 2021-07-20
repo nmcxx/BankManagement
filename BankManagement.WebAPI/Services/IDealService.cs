@@ -14,7 +14,6 @@ namespace BankManagement.WebAPI.Services
         IEnumerable<Deal> GetByIDCus(int id);
         Deal Add(Deal model);
         Deal Withdraw(int customerId, int currentcy, float withdrawnumber);
-        void Delete(int id);
     }
     public class DealService : IDealService
     {
@@ -45,12 +44,6 @@ namespace BankManagement.WebAPI.Services
             {
                 throw e;
             }
-        }
-
-        public void Delete(int id)
-        {
-           
-
         }
 
         public IEnumerable<Deal> GetAll()
