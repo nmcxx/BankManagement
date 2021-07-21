@@ -19,6 +19,7 @@ namespace BankManagement.WebAPI.Controllers
 
     public class AuthenController : Controller
     {
+        private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private IMapper _mapper;
         private readonly IAuthenService _authenService;
         private readonly IConfiguration _configuration;
@@ -43,14 +44,16 @@ namespace BankManagement.WebAPI.Controllers
         {
             try
             {
+                _logger.Trace("Access Login Controller");
                 var user = _mapper.Map<Customer>(model);
                 var a = _authenService.Login(user);
 
                 if (a == null)
                 {
+                    _logger.Warn("User is not found");
                    return View();
                 }
-
+                _logger.Trace("Login successfully");
                 var claim = new[] {
                new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub, user.Email)
                 };
@@ -65,10 +68,12 @@ namespace BankManagement.WebAPI.Controllers
                   expires: DateTime.UtcNow.AddMinutes(expiryInMinutes),
                   signingCredentials: new SigningCredentials(signinKey, SecurityAlgorithms.HmacSha256)
                 );
+                _logger.Info("token : " + token.ToString());
                 return Ok(token);
             }
             catch (Exception e)
             {
+                _logger.Error(e.Message);
                 return BadRequest("Error with exception: " + e);
             }
         }

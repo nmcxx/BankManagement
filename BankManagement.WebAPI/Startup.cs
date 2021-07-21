@@ -7,16 +7,18 @@ using Microsoft.EntityFrameworkCore;
 using BankManagement.WebAPI.Helpers;
 using BankManagement.WebAPI.Services;
 using System;
+using BankManagement.WebAPI.Middleware;
+using BankManagement.WebAPI.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace BankManagement.WebAPI
 {
     public class Startup
     {
-        private readonly IWebHostEnvironment _env;
-
-        public Startup(IWebHostEnvironment env, IConfiguration configuration)
+        private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        public Startup( IConfiguration configuration)
         {
-            _env = env;
             Configuration = configuration;
         }
 
@@ -26,15 +28,35 @@ namespace BankManagement.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             // use sql server db in production and sqlite db in development
-            if (_env.IsProduction())
-                services.AddDbContext<DataContext>();
+            services.AddDbContext<DataContext>();
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);//We set Time here 
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
             services.AddControllers();
-
+            services.AddLogging();
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
             services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("BankManagementWebApiDatabase")));
 
             services.AddScoped<IAuthenService, AuthenService>();
+            services.AddScoped<IDealService, DealService>();
+            services.AddScoped<ICustomerService, CustomerService>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -51,8 +73,17 @@ namespace BankManagement.WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseSession();
+            app.UseCookiePolicy();
+            app.ConfigureCustomExceptionMiddleware();
 
             app.UseRouting();
 
