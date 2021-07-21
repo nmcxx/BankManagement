@@ -127,8 +127,8 @@ namespace BankManagement.WebAPI.Migrations
                     b.Property<int?>("CurrencyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ExchangeRateName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ExchangeRateName")
+                        .HasColumnType("int");
 
                     b.HasKey("ExchangeRateId");
 
