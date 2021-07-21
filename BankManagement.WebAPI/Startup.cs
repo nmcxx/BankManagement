@@ -4,21 +4,23 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using BankManagement.WebAPI.Helpers;
 using BankManagement.WebAPI.Services;
 using System;
-using BankManagement.WebAPI.Middleware;
-using BankManagement.WebAPI.Extensions;
-using Microsoft.Extensions.Logging;
+using System.Reflection;
+using System.IO;
 using Microsoft.AspNetCore.Http;
 
 namespace BankManagement.WebAPI
 {
     public class Startup
     {
-        private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        public Startup( IConfiguration configuration)
+        private readonly IWebHostEnvironment _env;
+
+        public Startup(IWebHostEnvironment env, IConfiguration configuration)
         {
+            _env = env;
             Configuration = configuration;
         }
 
@@ -28,35 +30,54 @@ namespace BankManagement.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             // use sql server db in production and sqlite db in development
-            services.AddDbContext<DataContext>();
-            services.AddDistributedMemoryCache();
-            services.AddSession(options =>
+            if (_env.IsProduction())
+                services.AddDbContext<DataContext>();
+
+            services.AddControllers();
+
+            services.AddSwaggerGen(c =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);//We set Time here 
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "v1" });
+
+
+                // comments for the swagger 
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+
+                c.OperationFilter<AddAuthHeaderOperationFilter>();
+
+                //c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                //{
+                //    Name = "Authorization",
+                //    Type = SecuritySchemeType.ApiKey,
+                //    Scheme = "Bearer",
+                //    BearerFormat = "JWT",
+                //    In = ParameterLocation.Header,
+                //    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
+                //});
+                //c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                //{
+                //    {
+                //          new OpenApiSecurityScheme
+                //            {
+                //                Reference = new OpenApiReference
+                //                {
+                //                    Type = ReferenceType.SecurityScheme,
+                //                    Id = "Bearer"
+                //                }
+                //            },
+                //            new string[] {}
+
+                //    }
+                //});
             });
 
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-            services.AddControllers();
-            services.AddLogging();
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
             services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("BankManagementWebApiDatabase")));
 
             services.AddScoped<IAuthenService, AuthenService>();
             services.AddScoped<IDealService, DealService>();
-            services.AddScoped<ICustomerService, CustomerService>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -72,18 +93,11 @@ namespace BankManagement.WebAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1"));
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseSession();
-            app.UseCookiePolicy();
-            app.ConfigureCustomExceptionMiddleware();
 
             app.UseRouting();
 

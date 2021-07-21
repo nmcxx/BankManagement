@@ -4,17 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ProductManagement.Helpers;
-using System.Globalization;
 
 namespace BankManagement.WebAPI.Services
 {
     public interface IDealService
     {
         IEnumerable<Deal> GetAll();
-        IEnumerable<Deal> GetByID(int id);
+        Deal GetByID(int id);
+        Deal Add(Deal model);
         Deal Withdraw(int customerId, int currentcy, float withdrawnumber);
         void Delete(int id);
-        IEnumerable<Deal> SearchByDate(string startDate, string endDate);
     }
     public class DealService : IDealService
     {
@@ -23,88 +22,59 @@ namespace BankManagement.WebAPI.Services
         {
             _db = db;
         }
+        public Deal Add(Deal model)
+        {
+            if (_db.Customers.Find(model.CustomerIdSend) == null || _db.Customers.Find(model.CustomerIdRevice) == null)
+                throw new AppException("Customer is not exists");
+
+            if (_db.Customers.Find(model.CustomerIdSend).AccountBalancce - model.Money <= 50000)
+                throw new AppException("Your amount is not enough");
+
+
+            try
+            {
+                _db.Customers.Find(model.CustomerIdSend).AccountBalancce -= model.Money;
+                _db.Customers.Find(model.CustomerIdRevice).AccountBalancce += model.Money;
+                model.Date = DateTime.Now;
+                var deal = _db.AddAsync(model);
+                _db.SaveChangesAsync();
+                return deal.Result.Entity;
+                
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+
+
+        }
 
         public void Delete(int id)
         {
-            var obj = _db.Deals.Find(id);
-            if(obj == null)
-                throw new AppException("Deal is not found");
-            _db.Deals.Remove(obj);
-            _db.SaveChanges();
+            throw new NotImplementedException();
         }
 
         public IEnumerable<Deal> GetAll()
         {
-            var deal = _db.Deals.Select(s => new Deal
-            {
-                DealId = s.DealId,
-                Money = s.Money,
-                Date = s.Date,
-                CustomerIdRevice = s.CustomerIdRevice,
-                CustomerIdSend = s.CustomerIdSend,
-                Customers = _db.Customers.Where(v => v.CustomerId == s.Customers.CustomerId).FirstOrDefault(),
-                Services = _db.Services.Where(a => a.ServiceId == s.Services.ServiceId).FirstOrDefault(),
-                Currencies = _db.Currencies.Where(b => b.CurrencyId == s.Currencies.CurrencyId).FirstOrDefault()
-            }).ToList();
-            return deal;
+            throw new NotImplementedException();
         }
 
-        public IEnumerable<Deal> GetByID(int id)
+        public Deal GetByID(int id)
         {
-            var customer = _db.Customers.Find(id);
-
-            var deal = _db.Deals.Where(x => x.Customers.CustomerId == customer.CustomerId).Select(s => new Deal {
-                DealId =s.DealId,
-                Money = s.Money,
-                Date = s.Date,
-                CustomerIdRevice = s.CustomerIdRevice,
-                CustomerIdSend = s.CustomerIdSend,
-                Customers = customer,
-                Services = _db.Services.Where(a => a.ServiceId == s.Services.ServiceId).FirstOrDefault(),
-                Currencies = _db.Currencies.Where(b => b.CurrencyId == s.Currencies.CurrencyId).FirstOrDefault()
-            }).ToList();
-            return deal;
+            throw new NotImplementedException();
         }
-
-        public IEnumerable<Deal> SearchByDate(string startDate, string endDate)
-        {
-            if (startDate == null || endDate == null)
-                throw new AppException("date not null");
-            DateTime start = DateManager.GetDate(startDate);
-
-            DateTime end = DateManager.GetDate(endDate);
-
-            if(start > end)
-                throw new AppException("start date must less than end day");
-            var rangeData = _db.Deals.Where(x => x.Date >= start && x.Date <= end)
-                .Select(s => new Deal
-                {
-                    DealId = s.DealId,
-                    Money = s.Money,
-                    Date = s.Date,
-                    CustomerIdRevice =s.CustomerIdRevice,
-                    CustomerIdSend =s.CustomerIdSend,
-                    Customers = _db.Customers.Where(a => a.CustomerId == s.Customers.CustomerId).FirstOrDefault(),
-                    Services = _db.Services.Where(b => b.ServiceId == s.Services.ServiceId).FirstOrDefault(),
-                    Currencies =_db.Currencies.Where(c => c.CurrencyId == s.Currencies.CurrencyId).FirstOrDefault()
-                })
-                .ToList();
-            return rangeData;
-        }
-
         public Deal Withdraw(int customerId, int currentcy, float withdrawnumber)
         {
             var model = _db.Customers.Find(customerId);
-            System.ComponentModel.DateTimeConverter c = new System.ComponentModel.DateTimeConverter();
 
-            if (_db.Customers.Any(x => x.CustomerId != currentcy))
+            if (_db.Customers.Any(x => x.CurrencyId != currentcy))
                 throw new AppException("Currentcy " + currentcy + " is not valid");
             if (_db.Customers.Any(x => x.AccountBalancce < withdrawnumber))
                 throw new AppException("Account balance " + withdrawnumber + " is not enought");
             var deal = new Deal
             {
                 Money = withdrawnumber,
-                Date = (DateTime)c.ConvertFromString("yyyy-mm-dd"),
+                Date = DateTime.Now,
                 CustomerIdRevice = model.CustomerId,
                 CustomerIdSend = 0,
                 Customers = _db.Customers.Where(x => x.CustomerId == model.CustomerId).FirstOrDefault(),
@@ -117,6 +87,5 @@ namespace BankManagement.WebAPI.Services
             _db.SaveChanges();
             return deal;
         }
-        
     }
 }
