@@ -39,6 +39,9 @@ namespace BankManagement.WebAPI.Services
                 throw new AppException("PhoneNumber is required");
 
             DateTime DOB = DateTime.Now;
+
+            //DateTime DOB = (DateTime)DateManager.GetDate(model.DateOfBirth.ToString());
+
             if (string.IsNullOrWhiteSpace(DOB.ToString()))
                 throw new AppException("Date of birth is required");
             bool valid = IsValidEmail(model.Email);

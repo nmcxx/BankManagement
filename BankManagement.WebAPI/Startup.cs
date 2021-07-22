@@ -49,6 +49,17 @@ namespace BankManagement.WebAPI
 
                 c.OperationFilter<AddAuthHeaderOperationFilter>();
 
+
+                c.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+                {
+                    Description = "`Token only!!!` - without `Bearer_` prefix",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Scheme = "bearer"
+                });
+
+
             });
 
             services.AddDbContext<DataContext>(options =>
