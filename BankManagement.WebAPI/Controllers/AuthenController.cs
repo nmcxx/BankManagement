@@ -2,7 +2,6 @@
 using BankManagement.WebAPI.Entities;
 using BankManagement.WebAPI.Models;
 using BankManagement.WebAPI.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -20,6 +19,7 @@ namespace BankManagement.WebAPI.Controllers
 
     public class AuthenController : Controller
     {
+        private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private IMapper _mapper;
         private readonly IAuthenService _authenService;
         private readonly IConfiguration _configuration;
@@ -31,41 +31,32 @@ namespace BankManagement.WebAPI.Controllers
             _configuration = configuration;
         }
 
-        #region Login  
-        /// <summary>
-        /// Login.
-        /// </summary>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST /Login
-        ///     {
-        ///        "email": "string",
-        ///        "password": "string"
-        ///     }
-        ///
-        /// </remarks>
-        /// <param name="model"></param>
-        /// <returns>Status success and information customer</returns>
-        /// <response code="201">Returns information customer</response>
-        /// <response code="400">If the Customer is null or email or password not valid</response>
+        [Route("Login")]
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
         [Route("Login")]
         [HttpPost]
         public IActionResult Login([FromBody] LoginModel model)
         {
             try
             {
+                _logger.Trace("Access Login Controller");
                 var user = _mapper.Map<Customer>(model);
                 var a = _authenService.Login(user);
 
                 if (a == null)
                 {
-                   return BadRequest("Not found");
+                    _logger.Warn("User is not found");
+                   return View();
                 }
-
-                /*var claim = new[] {
+                _logger.Trace("Login successfully");
+                var claim = new[] {
                new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub, user.Email)
-                };*/
+                };
                 var signinKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_configuration["Jwt:SigningKey"]));
 
@@ -77,15 +68,15 @@ namespace BankManagement.WebAPI.Controllers
                   expires: DateTime.UtcNow.AddMinutes(expiryInMinutes),
                   signingCredentials: new SigningCredentials(signinKey, SecurityAlgorithms.HmacSha256)
                 );
-                string Token = new JwtSecurityTokenHandler().WriteToken(token);
-                
-                return Ok(Token);
+                _logger.Info("token : " + token.ToString());
+                return Ok(token);
             }
             catch (Exception e)
             {
+                _logger.Error(e.Message);
                 return BadRequest("Error with exception: " + e);
             }
         }
-        #endregion
+        
     }
 }
