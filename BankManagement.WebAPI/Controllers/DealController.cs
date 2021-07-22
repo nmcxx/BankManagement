@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using X.PagedList;
 
 namespace BankManagement.WebAPI.Controllers
 {
@@ -16,7 +15,6 @@ namespace BankManagement.WebAPI.Controllers
     [ApiController]
     public class DealController : Controller
     {
-        private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private IMapper _mapper;
         private readonly IDealService _dealService;
         private readonly IConfiguration _configuration;
@@ -28,68 +26,25 @@ namespace BankManagement.WebAPI.Controllers
             _configuration = configuration;
         }
 
-        [Route("GetAllDeal")]
-        [HttpGet]
-        public IActionResult GetAllDeal()
-        {
-            try
-            {
-
-                _logger.Trace("Access get all customer");
-                var c = _dealService.GetAll();
-                if (c == null)
-                    _logger.Warn("List customer is null");
-                _logger.Info("Get all customer successfully");
-                return Ok(c);
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e.Message);
-                return BadRequest("Error: " + e.Message);
-            }
-
-        }
-
-        [Route("FilterByDate")]
-        [HttpGet]
-        public IActionResult FilterByDate([FromForm] string startDate, string endDate)
-        {
-            try
-            {
-                _logger.Trace("Access filter deal by date");
-                var x = _dealService.SearchByDate(startDate, endDate);
-                if (x == null)
-                    _logger.Warn("Deal not found");
-                _logger.Info("Filter deal from :" + startDate + "" + "to" + endDate + "successfully");
-                return Ok(x);
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e.Message);
-                return BadRequest(e.Message);
-            }
-
-        }
-
-        [Route("GetDealByid/{id}")]
-        [HttpGet]
-        public IActionResult GetByid(int id)
-        {
-            try
-            {
-                _logger.Trace("Access search deal by id");
-                var x = _dealService.GetByID(id);
-                if (x == null)
-                    _logger.Warn("Deal not found");
-                _logger.Info("Get deal by id successfully");
-                return Ok(x);
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e.Message);
-                return BadRequest(e.Message);
-            }
-        }
+        #region AddWithdraw
+        /// <summary>
+        /// Withdraw money.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /AddWithdraw
+        ///     {
+        ///          "currencyid": "int",
+        ///          "withdraw": "float",
+        ///          "customerid": "int",
+        ///      }
+        ///
+        /// </remarks>
+        /// <param cusid="customerid" currid="currencyId" witdra="withdraw"></param>
+        /// <returns>Status success</returns>
+        /// <response code="201">Returns information customer</response>
+        /// <response code="400">Value is not a valid </response>
         [Authorize]
         [Route("AddWithdraw")]
         [HttpPost]
@@ -105,7 +60,31 @@ namespace BankManagement.WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+        #endregion
 
+        #region Transfer
+        /// <summary>
+        /// Transfer.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Transfer
+        ///     {
+        ///          "DealId": "int",
+        ///          "Money": "number",
+        ///          "Date": "datetime",
+        ///          "CustomerIdSend": "int",
+        ///          "CustomerIdRevice": "int",
+        ///          "CustomerId": "CustomerId",
+        ///          "CustomerName": "CustomerName",
+        ///      }
+        ///
+        /// </remarks>
+        /// <param name="deal"></param>
+        /// <returns>Status success</returns>
+        /// <response code="201">Returns information customer</response>
+        /// <response code="400">Value is not a valid </response>
         [Authorize]
         [Route("Transfer")]
         [HttpPost]
@@ -121,5 +100,61 @@ namespace BankManagement.WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+        #endregion
+
+        #region GetById
+        /// <summary>
+        /// Get deal by Id.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     GET /GetById
+        ///     {
+        ///          
+        ///      }
+        ///
+        /// </remarks>
+        /// <param name="id" ></param>
+        /// <returns>Status success</returns>
+        /// <response code="201">Returns information customer</response>
+        /// <response code="400">Value is not a valid </response>
+        [Authorize]
+        [Route("GetById/{id}")]
+        [HttpGet]
+        public IActionResult GetById(int id)
+        {
+            var deal = _dealService.GetByID(id);
+            //var model = _mapper.Map<DealModel>(deal);
+            return Ok(deal);
+        }
+        #endregion
+
+        #region GetByIdCus
+        /// <summary>
+        /// Get deal by customer id.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     GET /GetByIdCus
+        ///     {
+        ///          
+        ///      }
+        ///
+        /// </remarks>
+        /// <param name="id" ></param>
+        /// <returns>Status success</returns>
+        /// <response code="201">Returns information customer</response>
+        /// <response code="400">Value is not a valid </response>
+        [Route("GetByIdCus/{id}")]
+        [HttpGet]
+        public IActionResult GetByIdCus(int id)
+        {
+            var deal = _dealService.GetByIDCus(id);
+            //var model = _mapper.Map<DealModel>(deal);
+            return Ok(deal);
+        }
+        #endregion
     }
 }

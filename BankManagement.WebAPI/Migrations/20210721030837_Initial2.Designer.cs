@@ -4,14 +4,16 @@ using BankManagement.WebAPI.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BankManagement.WebAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210721030837_Initial2")]
+    partial class Initial2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,10 +70,12 @@ namespace BankManagement.WebAPI.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("RolesRoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("CustomerId");
+
+                    b.HasIndex("RolesRoleId");
 
                     b.ToTable("Customers");
                 });
@@ -125,8 +129,8 @@ namespace BankManagement.WebAPI.Migrations
                     b.Property<int?>("CurrencyId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ExchangeRateName")
-                        .HasColumnType("int");
+                    b.Property<string>("ExchangeRateName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ExchangeRateId");
 
@@ -163,6 +167,15 @@ namespace BankManagement.WebAPI.Migrations
                     b.HasKey("ServiceId");
 
                     b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("BankManagement.WebAPI.Entities.Customer", b =>
+                {
+                    b.HasOne("BankManagement.WebAPI.Entities.Role", "Roles")
+                        .WithMany()
+                        .HasForeignKey("RolesRoleId");
+
+                    b.Navigation("Roles");
                 });
 
             modelBuilder.Entity("BankManagement.WebAPI.Entities.Deal", b =>
