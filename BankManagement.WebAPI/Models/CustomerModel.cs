@@ -15,7 +15,7 @@ namespace BankManagement.WebAPI.Models
 
         [StringLength(10)]
         public string PhoneNumber { get; set; }
-        public string AccountNumber { get; set; }
+        public float AccountBalance { get; set; }
         public DateTime DateOfBirth { get; set; }
 
     }

@@ -14,6 +14,7 @@ namespace BankManagement.WebAPI.Services
         Deal Add(Deal model);
         Deal Withdraw(int customerId, int currentcy, float withdrawnumber);
         void Delete(int id);
+        IEnumerable<Deal> SearchByDate(string startDate, string endDate);
     }
     public class DealService : IDealService
     {
@@ -63,6 +64,34 @@ namespace BankManagement.WebAPI.Services
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<Deal> SearchByDate(string startDate, string endDate)
+        {
+
+                if (startDate == null || endDate == null)
+                    throw new AppException("date not null");
+                DateTime start = DateManager.GetDate(startDate);
+
+                DateTime end = DateManager.GetDate(endDate);
+
+                if (start > end)
+                    throw new AppException("start date must less than end day");
+                var rangeData = _db.Deals.Where(x => x.Date >= start && x.Date <= end)
+                    .Select(s => new Deal
+                    {
+                        DealId = s.DealId,
+                        Money = s.Money,
+                        Date = s.Date,
+                        CustomerIdRevice = s.CustomerIdRevice,
+                        CustomerIdSend = s.CustomerIdSend,
+                        Customers = _db.Customers.Where(a => a.CustomerId == s.Customers.CustomerId).FirstOrDefault(),
+                        Services = _db.Services.Where(b => b.ServiceId == s.Services.ServiceId).FirstOrDefault(),
+                        Currencies = _db.Currencies.Where(c => c.CurrencyId == s.Currencies.CurrencyId).FirstOrDefault()
+                    })
+                    .ToList();
+                return rangeData;
+        }
+
         public Deal Withdraw(int customerId, int currentcy, float withdrawnumber)
         {
             var model = _db.Customers.Find(customerId);
