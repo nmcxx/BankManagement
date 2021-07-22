@@ -68,8 +68,7 @@ namespace BankManagement.WebAPI.Services
                 AccountNumber = model.AccountNumber,
                 AccountBalancce = model.AccountBalancce,
                 DateOfBirth = model.DateOfBirth,
-                //Role = _db.Roles.Find(2)                
-                Role = "User"
+                Roles = _db.Roles.Find(2)                
             };
             _db.Customers.Add(cus);
             try

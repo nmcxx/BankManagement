@@ -152,6 +152,8 @@ namespace BankManagement.WebAPI.Controllers
         public IActionResult GetByIdCus(int id)
         {
             var deal = _dealService.GetByIDCus(id);
+            if (deal == null)
+                return BadRequest("Not found customer had id " + id);
             //var model = _mapper.Map<DealModel>(deal);
             return Ok(deal);
         }
