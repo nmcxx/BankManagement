@@ -189,7 +189,8 @@ namespace BankManagement.WebAPI.Services
                 AccountNumber = s.AccountNumber,
                 AccountBalancce =s.AccountBalancce,
                 DateOfBirth = s.DateOfBirth,
-                Roles = _db.Roles.Where(x => x.RoleId == s.Roles.RoleId).FirstOrDefault()
+                //Roles = _db.Roles.Where(x => x.RoleId == s.Roles.RoleId).FirstOrDefault()
+                Roles = s.Roles
             }).ToList();
             if(x == null)
             {

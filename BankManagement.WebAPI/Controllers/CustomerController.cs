@@ -38,26 +38,44 @@ namespace BankManagement.WebAPI.Controllers
         /// <response code="400">If the list customer is null</response>
         [Route("GetAllCustomer")]
         [HttpGet]
-        public IActionResult Index(int? page)
+        public IActionResult Index()
         {
             try
             {
-                var pageNumber = page ?? 1;
-                int pageSize = 4;
+                
                 _logger.Trace("Access get all customer");
                 var c = _customerService.GetAll();
                 if (c == null)
                     throw new Exception("List customer is null");
-                var onePageOfCustomers = c.ToPagedList(pageNumber, pageSize);
+                
                 _logger.Info("Get all customer successfully");
-                return Ok(onePageOfCustomers);
+                return Ok(c);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.Error(e.Message);
                 return BadRequest("Error: " + e.Message);
             }
-            
+
+        }
+        [Route("GetCustomerById")]
+        [HttpGet]
+        public IActionResult GetCustomerById(int id)
+        {
+            try
+            {
+                _logger.Trace("Access get customer by id");
+                var c = _customerService.GetById(id);
+                if (c == null)
+                    throw new Exception("Get failed");
+                _logger.Info("Get customer" + c.CustomerId + "" + " successfully");
+                return Ok(c);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.Message);
+                return BadRequest("Error: " + e.Message);
+            }
         }
         #endregion
 
