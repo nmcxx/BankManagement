@@ -70,8 +70,7 @@ namespace BankManagement.WebAPI.Services
                 AccountNumber = model.AccountNumber,
                 AccountBalancce = model.AccountBalancce,
                 DateOfBirth = model.DateOfBirth,
-                //Role = _db.Roles.Find(2)                
-                Role = "User"
+                Roles = _db.Roles.Find(2)                
             };
             _db.Customers.Add(cus);
             try
@@ -171,8 +170,7 @@ namespace BankManagement.WebAPI.Services
             string DOB = Convert.ToString(model.DateOfBirth);
             if (!string.IsNullOrWhiteSpace(DOB))
                 obj.DateOfBirth = model.DateOfBirth;
-            //obj.Roles = _db.Roles.Find(2);
-            obj.Role = "User";
+            obj.Roles = _db.Roles.Find(2);
             _db.Customers.Update(obj);
             _db.SaveChanges();
             return obj;
@@ -191,8 +189,7 @@ namespace BankManagement.WebAPI.Services
                 AccountNumber = s.AccountNumber,
                 AccountBalancce =s.AccountBalancce,
                 DateOfBirth = s.DateOfBirth,
-                //Roles = _db.Roles.Where(x => x.RoleId == s.Roles.RoleId).FirstOrDefault()
-                Role = s.Role
+                Roles = _db.Roles.Where(x => x.RoleId == s.Roles.RoleId).FirstOrDefault()
             }).ToList();
             if(x == null)
             {
