@@ -13,5 +13,6 @@ namespace BankManagement.WebAPI.Models
 
         [Required]
         public string Password { get; set; }
+       
     }
 }

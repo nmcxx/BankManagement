@@ -1,14 +1,12 @@
 ﻿using BankManagement.WebAPI.Entities;
 using BankManagement.WebAPI.Helpers;
-using ProductManagement.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Globalization;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace BankManagement.WebAPI.Services
 {
@@ -19,6 +17,7 @@ namespace BankManagement.WebAPI.Services
     }
     public class AuthenService : IAuthenService
     {
+
         public DataContext _db;
         public AuthenService(DataContext db)
         {
@@ -32,6 +31,7 @@ namespace BankManagement.WebAPI.Services
             try
             {
                 obj = _db.Customers.SingleOrDefault(x => x.Email == model.Email);
+               
             }
             catch (Exception e)
             {
@@ -39,25 +39,9 @@ namespace BankManagement.WebAPI.Services
             }
             if (obj == null)
                 return null;
-            if (!(obj.Password == GetMD5(model.Password)))
+            if (!(obj.Password == (model.Password)))
                 return null;
             return obj;
         }
-        public static string GetMD5(string str)
-        {
-            MD5 md5 = new MD5CryptoServiceProvider();
-            byte[] fromData = Encoding.UTF8.GetBytes(str);
-            byte[] targetData = md5.ComputeHash(fromData);
-            string byte2String = null;
-
-            for (int i = 0; i < targetData.Length; i++)
-            {
-                byte2String += targetData[i].ToString("x2");
-
-            }
-            return byte2String;
-        }
-
-      
     }
 }

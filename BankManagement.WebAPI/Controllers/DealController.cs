@@ -26,6 +26,25 @@ namespace BankManagement.WebAPI.Controllers
             _configuration = configuration;
         }
 
+        #region AddWithdraw
+        /// <summary>
+        /// Withdraw money.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /AddWithdraw
+        ///     {
+        ///          "currencyid": "int",
+        ///          "withdraw": "float",
+        ///          "customerid": "int",
+        ///      }
+        ///
+        /// </remarks>
+        /// <param cusid="customerid" currid="currencyId" witdra="withdraw"></param>
+        /// <returns>Status success</returns>
+        /// <response code="201">Returns information customer</response>
+        /// <response code="400">Value is not a valid </response>
         [Authorize]
         [Route("AddWithdraw")]
         [HttpPost]
@@ -41,7 +60,31 @@ namespace BankManagement.WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+        #endregion
 
+        #region Transfer
+        /// <summary>
+        /// Transfer.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Transfer
+        ///     {
+        ///          "DealId": "int",
+        ///          "Money": "number",
+        ///          "Date": "datetime",
+        ///          "CustomerIdSend": "int",
+        ///          "CustomerIdRevice": "int",
+        ///          "CustomerId": "CustomerId",
+        ///          "CustomerName": "CustomerName",
+        ///      }
+        ///
+        /// </remarks>
+        /// <param name="deal"></param>
+        /// <returns>Status success</returns>
+        /// <response code="201">Returns information customer</response>
+        /// <response code="400">Value is not a valid </response>
         [Authorize]
         [Route("Transfer")]
         [HttpPost]
@@ -57,5 +100,61 @@ namespace BankManagement.WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+        #endregion
+
+        #region GetById
+        /// <summary>
+        /// Get deal by Id.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     GET /GetById
+        ///     {
+        ///          
+        ///      }
+        ///
+        /// </remarks>
+        /// <param name="id" ></param>
+        /// <returns>Status success</returns>
+        /// <response code="201">Returns information customer</response>
+        /// <response code="400">Value is not a valid </response>
+        [Authorize]
+        [Route("GetById/{id}")]
+        [HttpGet]
+        public IActionResult GetById(int id)
+        {
+            var deal = _dealService.GetByID(id);
+            //var model = _mapper.Map<DealModel>(deal);
+            return Ok(deal);
+        }
+        #endregion
+
+        #region GetByIdCus
+        /// <summary>
+        /// Get deal by customer id.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     GET /GetByIdCus
+        ///     {
+        ///          
+        ///      }
+        ///
+        /// </remarks>
+        /// <param name="id" ></param>
+        /// <returns>Status success</returns>
+        /// <response code="201">Returns information customer</response>
+        /// <response code="400">Value is not a valid </response>
+        [Route("GetByIdCus/{id}")]
+        [HttpGet]
+        public IActionResult GetByIdCus(int id)
+        {
+            var deal = _dealService.GetByIDCus(id);
+            //var model = _mapper.Map<DealModel>(deal);
+            return Ok(deal);
+        }
+        #endregion
     }
 }

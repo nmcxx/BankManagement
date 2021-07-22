@@ -10,7 +10,9 @@ using BankManagement.WebAPI.Services;
 using System;
 using System.Reflection;
 using System.IO;
-using Microsoft.AspNetCore.Http;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BankManagement.WebAPI
 {
@@ -47,6 +49,7 @@ namespace BankManagement.WebAPI
 
                 c.OperationFilter<AddAuthHeaderOperationFilter>();
 
+
                 c.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
                 {
                     Description = "`Token only!!!` - without `Bearer_` prefix",
@@ -56,6 +59,7 @@ namespace BankManagement.WebAPI
                     Scheme = "bearer"
                 });
 
+
             });
 
             services.AddDbContext<DataContext>(options =>
@@ -63,6 +67,7 @@ namespace BankManagement.WebAPI
 
             services.AddScoped<IAuthenService, AuthenService>();
             services.AddScoped<IDealService, DealService>();
+            services.AddScoped<ICustomerService, CustomerService>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
