@@ -117,7 +117,6 @@ namespace BankManagementTest
                 Email = "testaa@gmail.com",
                 Address = "Quy Nhon",
                 PhoneNumber = "012345678",
-                AccountBalance = 1000000,
                 DateOfBirth = DateTime.Parse("01/01/1999")
             };
             // Act
@@ -139,7 +138,6 @@ namespace BankManagementTest
                 Email = "testaa@gmail.com",
                 Address = "Quy Nhon",
                 PhoneNumber = "012345678",
-                AccountBalance = 1000000,
                 DateOfBirth = DateTime.Parse("01/01/1999")
             };
             customerController.ModelState.AddModelError("Name", "Required");
@@ -157,7 +155,6 @@ namespace BankManagementTest
                 Email = "duy@gmail.com",
                 Address = "Quy Nhon",
                 PhoneNumber = "0112345678",
-                AccountBalance = 1000000,
                 DateOfBirth = DateTime.Parse("01/01/1999"),
             };
             // Act
