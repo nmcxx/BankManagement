@@ -2,6 +2,7 @@
 using BankManagement.WebAPI.Entities;
 using BankManagement.WebAPI.Models;
 using BankManagement.WebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -59,12 +60,12 @@ namespace BankManagement.WebAPI.Controllers
 
                 if (a == null)
                 {
-                   return View();
+                   return BadRequest("Not found");
                 }
 
-                var claim = new[] {
+                /*var claim = new[] {
                new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub, user.Email)
-                };
+                };*/
                 var signinKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_configuration["Jwt:SigningKey"]));
 
@@ -76,7 +77,9 @@ namespace BankManagement.WebAPI.Controllers
                   expires: DateTime.UtcNow.AddMinutes(expiryInMinutes),
                   signingCredentials: new SigningCredentials(signinKey, SecurityAlgorithms.HmacSha256)
                 );
-                return Ok(token);
+                string Token = new JwtSecurityTokenHandler().WriteToken(token);
+                
+                return Ok(Token);
             }
             catch (Exception e)
             {

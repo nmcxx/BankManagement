@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace BankManagement.WebAPI.Services
 {
@@ -50,7 +50,7 @@ namespace BankManagement.WebAPI.Services
             builderPass.Append(RandomString(4, false));
             builderPass.Append(RandomNumber(1000, 9999));
             string pass = builderPass.ToString();
-            model.Password = pass;
+            model.Password = GetMD5(pass);
 
             StringBuilder builderAC = new StringBuilder();
             builderAC.Append(RandomNumber(1000, 9999));
@@ -67,7 +67,8 @@ namespace BankManagement.WebAPI.Services
                 AccountNumber = model.AccountNumber,
                 AccountBalancce = model.AccountBalancce,
                 DateOfBirth = model.DateOfBirth,
-                Roles = _db.Roles.Find(2)                
+                //Role = _db.Roles.Find(2)                
+                Role = "User"
             };
             _db.Customers.Add(cus);
             try
@@ -167,7 +168,8 @@ namespace BankManagement.WebAPI.Services
             string DOB = Convert.ToString(model.DateOfBirth);
             if (!string.IsNullOrWhiteSpace(DOB))
                 obj.DateOfBirth = model.DateOfBirth;
-            obj.Roles = _db.Roles.Find(2);
+            //obj.Roles = _db.Roles.Find(2);
+            obj.Role = "User";
             _db.Customers.Update(obj);
             _db.SaveChanges();
             return obj;
@@ -186,7 +188,8 @@ namespace BankManagement.WebAPI.Services
                 AccountNumber = s.AccountNumber,
                 AccountBalancce =s.AccountBalancce,
                 DateOfBirth = s.DateOfBirth,
-                Roles = _db.Roles.Where(x => x.RoleId == s.Roles.RoleId).FirstOrDefault()
+                //Roles = _db.Roles.Where(x => x.RoleId == s.Roles.RoleId).FirstOrDefault()
+                Role = s.Role
             }).ToList();
             if(x == null)
             {
@@ -203,6 +206,21 @@ namespace BankManagement.WebAPI.Services
                 throw new AppException("Customer id: " + id + "" + "is not found");
             }
             return x;
+        }
+
+        public static string GetMD5(string str)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] fromData = Encoding.UTF8.GetBytes(str);
+            byte[] targetData = md5.ComputeHash(fromData);
+            string byte2String = null;
+
+            for (int i = 0; i < targetData.Length; i++)
+            {
+                byte2String += targetData[i].ToString("x2");
+
+            }
+            return byte2String;
         }
     }
 }

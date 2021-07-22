@@ -64,8 +64,12 @@ namespace BankManagement.WebAPI.Services
         public IEnumerable<Deal> GetByIDCus(int id)
         {
             var cus = _db.Customers.Find(id);
+            if (cus == null)
+            {
+                throw new Exception("List dead of customer " + cus + " not found");
+            }
             //var deal = _db.Deals.Where(x => x.Customers.CustomerId == id).ToList();
-            var deal = _db.Deals.Select(s => new Deal
+            var deal = _db.Deals.Where(z=>z.Customers.CustomerId==id).Select(s => new Deal
             {
                 DealId = s.DealId,
                 Money = s.Money,

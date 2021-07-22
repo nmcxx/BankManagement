@@ -2,6 +2,7 @@
 using BankManagement.WebAPI.Entities;
 using BankManagement.WebAPI.Models;
 using BankManagement.WebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace BankManagement.WebAPI.Controllers
 {
+    [Route("[controller]")]
+    [ApiController]
     public class CustomerController : Controller
     {
         private IMapper _mapper;
